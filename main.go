@@ -87,18 +87,21 @@ func main() {
 
 	// Publish the container's IP address to the Arduino via serial after a 5-second delay
 	go func() {
-		time.Sleep(5 * time.Second)    // Wait for 5 seconds
-		hostIP := os.Getenv("HOST_IP") // Get the environment variable
-		if hostIP != "" {
-			message := fmt.Sprintf("server/ip:%s\n", hostIP) // Format the message
-			_, err := serialPort.Write([]byte(message))      // Send the message via serial
-			if err != nil {
-				log.Printf("Failed to write IP address to serial port: %v", err)
+		ticker := time.NewTicker(5 * time.Second) // Create a ticker that triggers every 5 seconds
+		defer ticker.Stop()                       // Ensure the ticker is stopped when the goroutine exits
+		for range ticker.C {
+			hostIP := os.Getenv("HOST_IP") // Get the environment variable
+			if hostIP != "" {
+				message := fmt.Sprintf("server/ip:%s\n", hostIP) // Format the message
+				_, err := serialPort.Write([]byte(message))      // Send the message via serial
+				if err != nil {
+					log.Printf("Failed to write IP address to serial port: %v", err)
+				} else {
+					fmt.Printf("Sent IP address to Arduino via serial: %s\n", message)
+				}
 			} else {
-				fmt.Printf("Sent IP address to Arduino via serial: %s\n", message)
+				fmt.Println("HOST_IP environment variable is not set.")
 			}
-		} else {
-			fmt.Println("HOST_IP environment variable is not set.")
 		}
 	}()
 	for {
