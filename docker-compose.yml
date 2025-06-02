@@ -28,6 +28,7 @@ services:
     privileged: true
     environment:
       - MQTT_BROKER=tcp://mqtt5:1883
+      - HOST_IP=${HOST_IP}
     restart: unless-stopped
 
 # volumes for mapping data, config, and log

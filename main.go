@@ -66,7 +66,20 @@ func main() {
 			break
 		}
 	}
-	defer client.Disconnect(250)
+
+	// Publish the container's IP address to the Arduino via serial
+	hostIP := os.Getenv("HOST_IP") // Get the environment variable
+	if hostIP != "" {
+		message := fmt.Sprintf("server/ip:%s\n", hostIP) // Format the message
+		_, err := serialPort.Write([]byte(message))      // Send the message via serial
+		if err != nil {
+			log.Printf("Failed to write IP address to serial port: %v", err)
+		} else {
+			fmt.Printf("Sent IP address to Arduino via serial: %s\n", message)
+		}
+	} else {
+		fmt.Println("HOST_IP environment variable is not set.")
+	}
 
 	// Subscribe to topics
 	for _, topic := range config.Topics {
