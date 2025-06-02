@@ -63,6 +63,7 @@ func main() {
 			// Wait before retrying
 			time.Sleep(5 * time.Second)
 		} else {
+			fmt.Println("Connected to MQTT broker successfully")
 			break
 		}
 	}
@@ -83,19 +84,23 @@ func main() {
 
 	// Read from serial and publish to MQTT
 	reader := bufio.NewReader(serialPort)
-	// Publish the container's IP address to the Arduino via serial
-	hostIP := os.Getenv("HOST_IP") // Get the environment variable
-	if hostIP != "" {
-		message := fmt.Sprintf("server/ip:%s\n", hostIP) // Format the message
-		_, err := serialPort.Write([]byte(message))      // Send the message via serial
-		if err != nil {
-			log.Printf("Failed to write IP address to serial port: %v", err)
+
+	// Publish the container's IP address to the Arduino via serial after a 5-second delay
+	go func() {
+		time.Sleep(5 * time.Second)    // Wait for 5 seconds
+		hostIP := os.Getenv("HOST_IP") // Get the environment variable
+		if hostIP != "" {
+			message := fmt.Sprintf("server/ip:%s\n", hostIP) // Format the message
+			_, err := serialPort.Write([]byte(message))      // Send the message via serial
+			if err != nil {
+				log.Printf("Failed to write IP address to serial port: %v", err)
+			} else {
+				fmt.Printf("Sent IP address to Arduino via serial: %s\n", message)
+			}
 		} else {
-			fmt.Printf("Sent IP address to Arduino via serial: %s\n", message)
+			fmt.Println("HOST_IP environment variable is not set.")
 		}
-	} else {
-		fmt.Println("HOST_IP environment variable is not set.")
-	}
+	}()
 	for {
 		// Read until newline
 		data, err := reader.ReadString('\n')
