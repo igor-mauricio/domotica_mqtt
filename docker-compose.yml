@@ -25,6 +25,7 @@ services:
       - ./config.json:/app/config.json:ro # Mount the config file
     devices:
       - "/dev:/dev" # Pass through serial devices
+    privileged: true
     environment:
       - MQTT_BROKER=tcp://mqtt5:1883
     restart: unless-stopped

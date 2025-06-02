@@ -18,4 +18,4 @@ RUN GOOS=linux GOARCH=arm GOARM=7 go build -o main .
 EXPOSE 1883
 
 # Command to run the application
-CMD ["./main"]
+CMD ["sh", "-c", "go run ."]

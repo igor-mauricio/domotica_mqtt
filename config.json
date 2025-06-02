@@ -1,5 +1,5 @@
 {
-  "mqtt_broker": "tcp://localhost:1884",
+  "mqtt_broker": "tcp://mqtt5:1883",
   "topics": ["casa/led", "casa/umidade", "casa/ventilador", "casa/servo", "casa/display"],
   "mqtt_user": "admin",
   "mqtt_password": "DEEUFPE",
