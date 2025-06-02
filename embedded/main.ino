@@ -62,6 +62,11 @@ void handleSerialInput(String input) {
       digitalWrite (fanBackward, LOW);
     }
     Serial.println("LEDCOMMANDRECEIVED - [" + message+"]");
+  } else if (topic == "casa/display") {
+    // Handle display commands here
+    Serial.println("DISPLAYCOMMANDRECEIVED - [" + message + "]");
+  } else {
+    Serial.println("Unknown topic: " + topic);
   }
 }
 

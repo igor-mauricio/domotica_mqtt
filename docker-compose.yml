@@ -5,15 +5,31 @@ services:
     image: eclipse-mosquitto
     container_name: mqtt5
     ports:
-      - "1884:1883" #default mqtt port
-      - "9001:9001" #default mqtt port for websockets
+      - "1884:1883" # default mqtt port
+      - "9001:9001" # default mqtt port for websockets
     volumes:
       - ./config:/mosquitto/config:rw
       - ./data:/mosquitto/data:rw
       - ./log:/mosquitto/log:rw
     restart: unless-stopped
 
-# volumes for mapping data,config and log
+  # Go program service
+  go-program:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: go-program
+    depends_on:
+      - mqtt5
+    volumes:
+      - ./config.json:/app/config.json:ro # Mount the config file
+    devices:
+      - "/dev:/dev" # Pass through serial devices
+    environment:
+      - MQTT_BROKER=tcp://mqtt5:1883
+    restart: unless-stopped
+
+# volumes for mapping data, config, and log
 volumes:
   config:
   data:
