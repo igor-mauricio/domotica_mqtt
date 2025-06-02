@@ -1,6 +1,6 @@
 {
   "mqtt_broker": "tcp://localhost:1883",
-  "topics": ["casa/led", "casa/solar", "casa/umidade", "casa/ventilador", "casa/servo", "casa/display"],
+  "topics": ["casa/led", "casa/umidade", "casa/ventilador", "casa/servo", "casa/display"],
   "mqtt_user": "admin",
   "mqtt_password": "DEEUFPE",
   "serial_port": "/dev/tty.usbserial-0001",

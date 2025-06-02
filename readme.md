@@ -12,3 +12,7 @@ mosquitto_passwd -c /mosquitto/config/pwfile user1
 ## Dados Mosquitto
 usuario: admin
 senha: DEEUFPE
+
+
+## topicos
+"casa/solar" - recebimento de radiancia

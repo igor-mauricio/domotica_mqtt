@@ -2,6 +2,8 @@
 
 // Pin definitions
 const int whiteLedPin = 13;
+const int fanForward = 7;
+const int fanBackward = 6;
 
 // Variables
 String inputString = "";
@@ -13,6 +15,8 @@ void setup() {
 
   // Initialize pins
   pinMode(whiteLedPin, OUTPUT);
+  pinMode (fanForward, OUTPUT); //define D7 pin as output
+   pinMode (fanBackward, OUTPUT); //define  D6 pin as output
 
   inputString.reserve(200); // Reserve memory for the input string
 }
@@ -26,7 +30,7 @@ void loop() {
   }
 
   // Periodically send sensor data
-  // sendSensorData();
+  sendSensorData();
 }
 
 void handleSerialInput(String input) {
@@ -42,30 +46,33 @@ void handleSerialInput(String input) {
   if (topic == "casa/led") {
     if (message == "on") {
       digitalWrite(whiteLedPin, HIGH);
-      Serial.println("TURNING ON LED");
-  } else if (message == "off") {
+   } else if (message == "off") {
       digitalWrite(whiteLedPin, LOW);
-      Serial.println("TURNING OFF LED");
-    } else {
-      Serial.println("Command not recognized");
+    }
+    Serial.println("LEDCOMMANDRECEIVED - [" + message+"]");
+  } else if (topic == "casa/ventilador") {
+   if (message == "horario") {
+      digitalWrite (fanForward, HIGH);
+      digitalWrite (fanBackward, LOW);
+   } else if (message == "antihorario") {
+      digitalWrite (fanForward, LOW);
+      digitalWrite (fanBackward, HIGH);
+    } else if (message == "desligar") {
+      digitalWrite (fanForward, LOW);
+      digitalWrite (fanBackward, LOW);
     }
     Serial.println("LEDCOMMANDRECEIVED - [" + message+"]");
   }
 }
 
-// void sendSensorData() {
-//   // Read soil humidity sensor
-//   int soilValue = analogRead(soilSensorPin);
-//   String soilMessage = "sensor/soil:" + String(soilValue);
-//   Serial.println(soilMessage);
+void sendSensorData() {
+  // Read soil humidity sensor
+  int tensaoSolar = analogRead(A1);
+  String mensagemSolar = "casa/solar:" + String(tensaoSolar);
+  Serial.println(mensagemSolar);
 
-//   // Read button state
-//   int buttonState = digitalRead(buttonPin);
-//   String buttonMessage = "sensor/button:" + String(buttonState);
-//   Serial.println(buttonMessage);
-
-//   delay(1000); // Send data every second
-// }
+  delay(1000); // Send data every second
+}
 
 // Serial event handler
 void serialEvent() {
