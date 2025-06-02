@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/tarm/serial"
@@ -55,8 +56,15 @@ func main() {
 		opts.SetPassword(config.MQTTPassword)
 	}
 	client := mqtt.NewClient(opts)
-	if token := client.Connect(); token.Wait() && token.Error() != nil {
-		log.Fatalf("Failed to connect to MQTT broker: %v", token.Error())
+	for {
+		if token := client.Connect(); token.Wait() && token.Error() != nil {
+			fmt.Printf("Failed to connect to MQTT broker: %v\n", token.Error())
+			log.Println("Retrying in 5 seconds...")
+			// Wait before retrying
+			time.Sleep(5 * time.Second)
+		} else {
+			break
+		}
 	}
 	defer client.Disconnect(250)
 
